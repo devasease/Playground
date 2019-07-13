@@ -3,21 +3,22 @@
 
 #include "pch.h"
 #include <iostream>
-#include "../OpenGL_Wrapper/window.h"
+#include "../GraphicEngine/window.h"
 #include <vector>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+
 
 int main()
 {
     std::cout << "Hello World!\n"; 
-	plg_gl::window window = plg_gl::window{};
+	plg_gl::window window{glm::vec2{800,600}};
 
 	window.setup_keys(std::vector<int>{GLFW_KEY_ESCAPE, GLFW_KEY_A});
 
 	do {
 		window.update();
-		std::cout << (int)window.get_input_state(GLFW_KEY_A);
 	} // Check if the ESC key was pressed or the window was closed
 	while (	window.closeWindow());
 

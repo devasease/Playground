@@ -166,8 +166,8 @@
     <ClCompile Include="PlayGround.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OpenGL_Wrapper\OpenGL_Wrapper.vcxproj">
-      <Project>{c702159d-399a-4648-8bc5-105f28310648}</Project>
+    <ProjectReference Include="..\GraphicEngine\GraphicEngine.vcxproj">
+      <Project>{775d2acd-deb5-4498-bd11-e6746dadfd19}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
