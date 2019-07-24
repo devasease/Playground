@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include "Time.h"
+#include "Text2D.h"
 using namespace glm;
 #include <iostream>
 #include <vector>
@@ -131,8 +132,9 @@ namespace plg_gl{
 	0.667979f, 1.0f - 0.335851f
 	};
 
-	window::window(glm::vec2 reselution)
+	window::window(glm::vec2 reselution) 
 	{
+		
 		// Initialise GLFW
 		if (!glfwInit())
 		{
@@ -143,9 +145,12 @@ namespace plg_gl{
 		glfwWindowHint(GLFW_SAMPLES, 4);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-		glEnable(GL_CULL_FACE);
+#ifdef __APPLE__
+		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
+#endif
+		
+
 
 		// Open a window and create its OpenGL context
 		if (window::mainWindow == nullptr)
@@ -163,6 +168,14 @@ namespace plg_gl{
 		}
 		glfwMakeContextCurrent(window_);
 
+		//Config global opengl state
+		// Enable depth test
+		glEnable(GL_DEPTH_TEST);
+		// Accept fragment if it closer to the camera than the former one
+		glDepthFunc(GL_LESS);
+		//glEnable(GL_BLEND);
+		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 		// Initialize GLEW
 		glewExperimental = true; // Needed for core profile
 		if (glewInit() != GLEW_OK) {
@@ -171,19 +184,10 @@ namespace plg_gl{
 			glfwTerminate();
 			return ;
 		}
-
+		glClearColor(0.3f, 0, 0.4f, 0);
 		// Ensure we can capture the escape key being pressed below
 		glfwSetInputMode(window_, GLFW_STICKY_KEYS, GL_TRUE);
 
-		// Enable depth test
-		glEnable(GL_DEPTH_TEST);
-		// Accept fragment if it closer to the camera than the former one
-		glDepthFunc(GL_LESS);
-
-		Sprite sprite = Sprite();
-
-		Sprite* test = new Sprite();
-		gameobject.push_back(test);
 
 		mouse_pos_ = mouse_pos();
 		camera_ = Camera();
@@ -235,10 +239,15 @@ namespace plg_gl{
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		//
+		//text2.render("testing", 40, 40, 40.0f, { 250,0,250 });
+
 		for (Sprite* sprite : gameobject)
 		{
 			sprite->render();
 		}
+
+		
 
 		glDisableVertexAttribArray(0);
 
@@ -287,6 +296,11 @@ namespace plg_gl{
 		}
 	}
 
+	void window::addSprite(Sprite* sprite)
+	{
+		gameobject.push_back(sprite);
+	}
+
 	KeyStatus window::get_input_state(const int key)
 	{
 		return key_statuses_->at(key);
@@ -327,6 +341,7 @@ namespace plg_gl{
 		}
 		
 	}
+
 
 
 #pragma endregion

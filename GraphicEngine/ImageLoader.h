@@ -9,7 +9,7 @@ namespace ResourceLoader {
 
 	GLuint loadJPG_custom(const char * imagepath);
 
-	GLuint CreateWhite(int red, int green, int blue);
+	GLuint CreateSolidTexture(int red, int green, int blue);
 
 	
 

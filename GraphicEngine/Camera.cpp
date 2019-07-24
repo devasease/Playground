@@ -38,6 +38,7 @@ Camera::Camera()
 	}
 
 	Projection = glm::perspective(glm::radians(initialFoV), 4.0f / 3.0f, 0.1f, 100.0f);
+	//Projection = glm::ortho(0.0f, 800.0f, 0.0f, 600.0f);
 	updateView();
 	// Our ModelViewProjection : multiplication of our 3 matrices
 	VP = Projection * View; // Remember, matrix multiplication is the other way around
@@ -48,7 +49,6 @@ void Camera::addHorAndVer(float horizontalAngle, float verticalAngle)
 {
 	this->verticalAngle += verticalAngle;
 	this->horizontalAngle += horizontalAngle;
-	std::cout << "Hor" << this->horizontalAngle << ":" << horizontalAngle << "\n";
 	direction.x = cos(this->verticalAngle) * sin(this->horizontalAngle);
 	direction.y = sin(this->verticalAngle);
 	direction.z = cos(this->verticalAngle) * cos(this->horizontalAngle);
@@ -76,8 +76,9 @@ void Camera::setFOV(float FOV)
 
 	initialFoV = FOV;
 	// Projection matrix : 45Åã Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
-	
 	Projection = glm::perspective(glm::radians(initialFoV), 4.0f / 3.0f, 0.1f, 100.0f);
+	//Projection = glm::ortho(0.0f, 800.0f, 0.0f, 600.0f);
+
 	// Or, for an ortho camera :
 	//glm::mat4 Projection = glm::ortho(-10.0f,10.0f,-10.0f,10.0f,0.0f,100.0f); // In world coordinates
 

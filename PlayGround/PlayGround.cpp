@@ -16,7 +16,8 @@ int main()
 	plg_gl::window window{glm::vec2{800,600}};
 
 	window.setup_keys(std::vector<int>{GLFW_KEY_ESCAPE, GLFW_KEY_A});
-
+	Sprite sprite = Sprite();
+	window.addSprite(&sprite);
 	do {
 		window.update();
 	} // Check if the ESC key was pressed or the window was closed

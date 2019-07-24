@@ -17,16 +17,8 @@ public:
 	void setPosition(glm::vec3 position);
 	void addPosition(glm::vec3 position);
 
-
-
 	float speed;
 	float mouseSpeed;
-
-
-
-
-
-
 	//Makes it easier to access the main camera
 	//But if live texture need to be implement later then update Sprite::render to also have the option to take VP
 	static Camera* mainCamera;
@@ -35,7 +27,8 @@ private:
 	glm::vec3 direction;
 	glm::vec3 right;
 	glm::vec3 up;
-	glm::mat4 Projection, View, VP;
+	//TODO Implement projection for Ortho
+	glm::mat4 Projection, View, VP, projectionOrtho;
 	float initialFoV;
 	float verticalAngle, horizontalAngle;
 

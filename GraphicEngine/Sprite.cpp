@@ -4,22 +4,21 @@
 #include "ImageLoader.h"
 #include <glm/glm.hpp>
 #include <glm/ext/matrix_transform.inl>
-#include "Time.h"
 #include "Camera.h"
 
 
-Sprite::Sprite(): modelRotation(), rotation()
+Sprite::Sprite() : modelRotation(), rotation(), shader_{ "SimpleVertexShader.vertexshader", "SimpleFragmentShader.fragmentshader" }
 {
 	scale = { 1.0f,1.0f, 1.0f };
-	position = { 0.0f,0.0f, 0.0f };
+	position = { 0.0f, 0.0f, 0.0f };
 	modelPosition= glm::translate(glm::mat4(1.0f), position);
 	modelScale = glm::scale(glm::mat4(1.0f), scale);
 	//rotation = glm::rotate(glm::mat4(1.0f), { 0.0f,0.0f, 0.0f });
 	// Create and compile our GLSL program from the shaders
-	programID = LoadShaders("SimpleVertexShader.vertexshader", "SimpleFragmentShader.fragmentshader");
+
 
 	// Get a handle for our "MVP" uniform
-	MatrixID = glGetUniformLocation(programID, "MVP");
+	MatrixID = glGetUniformLocation(shader_.getProgramID(), "MVP");
 
 	glGenVertexArrays(1, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
@@ -34,32 +33,52 @@ Sprite::Sprite(): modelRotation(), rotation()
 
 	// Load the texture using any two methods
 	//GLuint Texture = loadBMP_custom("uvtemplate.bmp");
-	Texture = ResourceLoader::CreateWhite(126,126,126);
-
-
+	Texture = ResourceLoader::CreateSolidTexture(255,255,255);
 
 	// Get a handle for our "myTextureSampler" uniform
-	TextureID = glGetUniformLocation(programID, "myTextureSampler");
-
+	TextureID = glGetUniformLocation(shader_.getProgramID(), "myTextureSampler");
+	//std::cout << "ProgramID" << TextureID << "\n";
 	// Bind our texture in Texture Unit 0
+	//glUseProgram(programID);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, Texture);
 	// Set our "myTextureSampler" sampler to use Texture Unit 0
-	glUniform1i(TextureID, 0);
+	glUniform1i(TextureID, GL_TEXTURE0);
 }
 
 void Sprite::setPosition(float x, float y, float z)
 {
-
+	position = { x, y, z };
+	modelPosition = glm::translate(glm::mat4(1.0f), position);
 }
-
+void Sprite::addPosition(float x, float y, float z)
+{
+	position.x += x;
+	position.y += y;
+	position.z += z;
+	modelPosition = glm::translate(glm::mat4(1.0f), position);
+}
 void Sprite::setScale(float x, float y, float z)
 {
+
+	scale = { x , y , z };
+	modelScale = glm::scale(glm::mat4(1.0f), scale);
 }
 
 void Sprite::setRotation(float x, float y, float z)
 {
 
+}
+
+void Sprite::setTexture(GLuint texture)
+{
+	Texture = texture;
+	// Bind our texture in Texture Unit 0
+	//glUseProgram(programID);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, Texture);
+	// Set our "myTextureSampler" sampler to use Texture Unit 0
+	glUniform1i(TextureID, GL_TEXTURE0);
 }
 
 glm::vec3 Sprite::getPosition()
@@ -80,16 +99,17 @@ glm::vec3 Sprite::getRotation()
 void Sprite::render()
 {
 	// Use our shader
-	glUseProgram(programID);
-	position.x += Time::deltaTime*0.1;
-	glm::mat4 MVP = Camera::mainCamera->getViewProject() * (position*scale);
+	glUseProgram(shader_.getProgramID());
+	//shader_.use();
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, Texture);
+
+	glm::mat4 MVP = Camera::mainCamera->getViewProject() * (modelPosition*modelScale);
 
 	// Send our transformation to the currently bound shader, 
 	// in the "MVP" uniform
 	glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-
-	// Use our shader
-	glUseProgram(programID);
 
 	// 1rst attribute buffer : vertices
 	glEnableVertexAttribArray(0);
@@ -117,6 +137,9 @@ void Sprite::render()
 
 	// Draw the triangle !
 	glDrawArrays(GL_TRIANGLES, 0, 6 * 3); // 3 indices starting at 0 -> 1 triangle
+
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
 }
 
 ::Sprite& Sprite::operator=(const Sprite& sprite)

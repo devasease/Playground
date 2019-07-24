@@ -6,7 +6,11 @@
 #include "KeyStatus.h"
 #include "Camera.h"
 #include "Sprite.h"
+#include "../CommonLib/Event.h"
+#include "Text2D.h"
 
+//Help since tutorial is not up to date
+//https://www.glfw.org/docs/3.0/moving.html
 namespace plg_gl {
 	struct mouse_pos
 	{
@@ -29,7 +33,7 @@ namespace plg_gl {
 		bool closeWindow();
 
 		void setup_keys(const std::vector<int>& enabled_keys);
-
+		void addSprite(Sprite*);
 		KeyStatus get_input_state(int key);
 		bool get_key_pressed(int key);
 		bool get_key_hold(int key);
@@ -55,10 +59,13 @@ namespace plg_gl {
 		GLuint Texture;
 		GLuint TextureID;
 
+		//Grapich2D::Text2D text2;
+		
+		Event<GLFWwindow*, int, int> window_resize_event_;
 		std::vector<Sprite*> gameobject;
 
 		void process_key_input(int key);
-
+		
 	};
 }
 

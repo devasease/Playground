@@ -83,7 +83,7 @@ namespace ResourceLoader {
 		return load_texture(1, 1, data);
 	}
 
-	GLuint CreateWhite(int red, int green, int blue)
+	GLuint CreateSolidTexture(int red, int green, int blue)
 	{
 		// Create one OpenGL texture
 		GLuint textureID;
@@ -91,7 +91,7 @@ namespace ResourceLoader {
 
 		// "Bind" the newly created texture : all future texture functions will modify this texture
 		glBindTexture(GL_TEXTURE_2D, textureID);
-		unsigned char * data = new unsigned char[3]{static_cast<unsigned char>(red), static_cast<unsigned char>(green), static_cast<unsigned char>(blue) };
+		unsigned char * data = new unsigned char[3]{static_cast<unsigned char>(blue), static_cast<unsigned char>(green), static_cast<unsigned char>(red) };
 
 
 		// Give the image to OpenGL
