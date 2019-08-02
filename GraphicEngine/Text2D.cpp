@@ -1,14 +1,18 @@
 #include "stdafx.h"
 #include "Text2D.h"
 #include "FontLoader.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp> 
+#include <glm/gtc/type_ptr.hpp>
 
 
-Text2D::Text2D() :	scale{ 1.0f },
+Text2D::Text2D(std::string text) :	scale{ 1.0f },
 					shader_{ "../Shader/textVertexShader.vertexshader", "../Shader/textFragmentShader.fragmentshader" },
-					color{ 0.5f,0.5f,0.5f },
-					position{ 20,20 }
+					color{ 0.9f,0.2f,0.6f },
+					position{ 0.0f,0.0f },
+					text{text}
+				
 {
-	
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 	glBindVertexArray(VAO);
@@ -18,6 +22,11 @@ Text2D::Text2D() :	scale{ 1.0f },
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+
+	glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(800), 0.0f, static_cast<GLfloat>(600));
+	shader_.use();
+	glUniformMatrix4fv(glGetUniformLocation(shader_.getProgramID(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+
 }
 
 
@@ -38,13 +47,15 @@ void Text2D::render()
 	glActiveTexture(GL_TEXTURE0);
 	glBindVertexArray(VAO);
 
+	GLfloat x = position.x;
+
 	// Iterate through all characters
 	std::string::const_iterator c;
 	for (c = text.begin(); c != text.end(); c++)
 	{
 		ResourceLoader::Character ch = *ResourceLoader::Characters->at(*c);
 
-		GLfloat xpos = position.x + ch.Bearing.x * scale;
+		GLfloat xpos = x + ch.Bearing.x * scale;
 		GLfloat ypos = position.y - (ch.Size.y - ch.Bearing.y) * scale;
 
 		GLfloat w = ch.Size.x * scale;
@@ -69,7 +80,7 @@ void Text2D::render()
 		// Render quad
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		// Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-		position.x += (ch.Advance >> 6) * scale; // Bitshift by 6 to get value in pixels (2^6 = 64)
+		x += (ch.Advance >> 6) * scale; // Bitshift by 6 to get value in pixels (2^6 = 64)
 	}
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);

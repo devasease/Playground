@@ -1,10 +1,14 @@
 #pragma once
-#include "../Snake/Apple.h"
+#include <string>
+#include "shader.h"
+#include <glm/vec3.hpp>
+#include <glm/vec2.hpp>
+#include <vector>
 
 class Text2D
 {
 public:
-	Text2D();
+	Text2D(std::string text);
 	~Text2D();
 
 	void updateText(std::string text);

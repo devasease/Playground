@@ -101,6 +101,7 @@ void Sprite::render()
 	// Use our shader
 	glUseProgram(shader_.getProgramID());
 	//shader_.use();
+	glBindVertexArray(VertexArrayID);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, Texture);

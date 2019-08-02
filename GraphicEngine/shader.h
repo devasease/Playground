@@ -5,6 +5,7 @@
 class Shader
 {
 public:
+	Shader() = default;
 	Shader(const char * vertex_file_path, const char * fragment_file_path);
 	~Shader() = default;
 

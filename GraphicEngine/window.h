@@ -34,6 +34,7 @@ namespace plg_gl {
 
 		void setup_keys(const std::vector<int>& enabled_keys);
 		void addSprite(Sprite*);
+		void addText(Text2D*);
 		KeyStatus get_input_state(int key);
 		bool get_key_pressed(int key);
 		bool get_key_hold(int key);
@@ -49,23 +50,13 @@ namespace plg_gl {
 
 		Camera camera_;
 
-		// identify our vertex buffer
-		GLuint vertexbuffer;
-		GLuint VertexArrayID;
-		GLuint programID;
-		GLuint MatrixID;
-		GLuint colorbuffer;
-		GLuint uvbuffer;
-		GLuint Texture;
-		GLuint TextureID;
-
 		//Grapich2D::Text2D text2;
 		
 		Event<GLFWwindow*, int, int> window_resize_event_;
 		std::vector<Sprite*> gameobject;
+		std::vector<Text2D*> textElements;
 
 		void process_key_input(int key);
-		
 	};
 }
 

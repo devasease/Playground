@@ -11,7 +11,6 @@
 #include "../GraphicEngine/window.h"
 #include "../GraphicEngine/FontLoader.h"
 #include "SnakeObject.h"
-#include "Apple.h"
 
 int main()
 {
@@ -19,20 +18,21 @@ int main()
 	const int width = 800, height = 600;
 	std::cout << "Setuping Snake game";
 	plg_gl::window window{ glm::vec2{width, height} };
-	//ResourceLoader::loadOTF("Salmon White - Personal Use.otf");
+	ResourceLoader::loadOTF("Salmon White - Personal Use.otf");
 	window.setup_keys(std::vector<int>{GLFW_KEY_ESCAPE, GLFW_KEY_A, GLFW_KEY_W, GLFW_KEY_S, GLFW_KEY_D});
 	SnakeObject snake {&window};
 	//Apple apple{ };
-	
-
-	Sprite sprite1 = Sprite();
-	window.addSprite(&sprite1);
+	Text2D text2{ "Testing" };
+	window.addText(&text2);
+	/*Sprite sprite1 = Sprite();
+	window.addSprite(&sprite1);*/
 	//sprite1.setTexture(ResourceLoader::Characters->at('c')->TextureID);
 
 	do {
 		
 		window.update();
 		snake.Update();
+
 
 	} // Check if the ESC key was pressed or the window was closed
 	while (window.closeWindow());

@@ -81,7 +81,7 @@ void ResourceLoader::loadOTF(const char* font_path)
 	}
 		
 
-	FT_Set_Pixel_Sizes(face, 0, 42);
+	FT_Set_Pixel_Sizes(face, 0, 48);
 
 	if (FT_Load_Char(face, 'X', FT_LOAD_RENDER))
 	{
@@ -169,6 +169,7 @@ void ResourceLoader::loadOTF(const char* font_path)
 		Characters->push_back(character);
 		
 	}
+
 	FT_Done_Face(face);
 	FT_Done_FreeType(ft);
 

@@ -5,10 +5,13 @@
 #include <glm/glm.hpp>
 #include "Time.h"
 #include "Text2D.h"
+#include "FontLoader.h"
+#include <glm/gtc/type_ptr.hpp>
 using namespace glm;
 #include <iostream>
 #include <vector>
 #include "Sprite.h"
+
 
 namespace plg_gl{
 	window* window::mainWindow = nullptr;
@@ -150,7 +153,7 @@ namespace plg_gl{
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
 #endif
 		
-
+		
 
 		// Open a window and create its OpenGL context
 		if (window::mainWindow == nullptr)
@@ -167,14 +170,16 @@ namespace plg_gl{
 			return ;
 		}
 		glfwMakeContextCurrent(window_);
-
+		
 		//Config global opengl state
 		// Enable depth test
-		glEnable(GL_DEPTH_TEST);
+		//glEnable(GL_DEPTH_TEST);
+		//glDepthFunc(GL_LESS);
 		// Accept fragment if it closer to the camera than the former one
-		glDepthFunc(GL_LESS);
-		//glEnable(GL_BLEND);
-		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_CULL_FACE);
+		glEnable(GL_BLEND);
+		//Add alpha to shader or else it just transparent
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		// Initialize GLEW
 		glewExperimental = true; // Needed for core profile
@@ -202,51 +207,22 @@ namespace plg_gl{
 	void window::update()
 	{
 		process_input();
-		Time::updateTime();
-
-#pragma region  camera code
-		// Reset mouse position for next frame
-		//glfwSetCursorPos(window_, 800 / 2, 600 / 2);
-
-		camera_.addHorAndVer(
-			camera_.mouseSpeed * Time::deltaTime * float(800 / 2 - mouse_pos_.xpos),
-			camera_.mouseSpeed * Time::deltaTime * float(600 / 2 - mouse_pos_.ypos)
-		);
-
-
-		/*// Move forward
-		if (glfwGetKey(window_, GLFW_KEY_UP) == GLFW_PRESS) {
-			camera_.addPosition(camera_.direction * Time::deltaTime * camera_.speed);
-		}
-		// Move backward
-		if (glfwGetKey(window_, GLFW_KEY_DOWN) == GLFW_PRESS) {
-			camera_.addPosition(camera_.direction * Time::deltaTime * camera_.speed);
-		}
-		// Strafe right
-		if (glfwGetKey(window_, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-			camera_.addPosition(camera_.right * Time::deltaTime * camera_.speed);
-		}
-		// Strafe left
-		if (glfwGetKey(window_, GLFW_KEY_LEFT) == GLFW_PRESS) {
-			camera_.addPosition(camera_.right * Time::deltaTime * camera_.speed);
-		}*/
-
-#pragma endregion
-		
-		
-		
+		Time::updateTime();	
 
 		// Clear the screen
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		//
-		//text2.render("testing", 40, 40, 40.0f, { 250,0,250 });
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT);
 
 		for (Sprite* sprite : gameobject)
 		{
 			sprite->render();
 		}
 
+		for (Text2D* text : textElements)
+		{
+			text->render();
+		}
 		
 
 		glDisableVertexAttribArray(0);
@@ -288,6 +264,8 @@ namespace plg_gl{
 		}
 	}
 
+	
+
 	void window::setup_keys(const std::vector<int>& enabled_keys)
 	{
 		key_statuses_ = new std::map<int, KeyStatus>();
@@ -299,6 +277,11 @@ namespace plg_gl{
 	void window::addSprite(Sprite* sprite)
 	{
 		gameobject.push_back(sprite);
+	}
+
+	void window::addText(Text2D* text)
+	{
+		textElements.push_back(text);
 	}
 
 	KeyStatus window::get_input_state(const int key)
@@ -342,8 +325,7 @@ namespace plg_gl{
 		
 	}
 
-
+	
 
 #pragma endregion
-
 }
